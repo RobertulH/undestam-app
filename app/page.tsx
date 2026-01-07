@@ -4,12 +4,31 @@ import { useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "undestam_requests_v01";
 
-function uid() {
+type StatusKey = "new" | "talking" | "booked";
+
+type RequestItem = {
+  id: string;
+  title: string;
+  location: string;
+  type: string;
+  start: string; // ISO date (yyyy-mm-dd) sau ""
+  end: string; // ISO date (yyyy-mm-dd) sau ""
+  people: number;
+  budget: string;
+  fac: string[];
+  details: string;
+  status: StatusKey;
+  createdAt: number;
+};
+
+type FacState = Record<string, boolean>;
+
+function uid(): string {
   return Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
 }
 
-function escapeHtml(str) {
-  return String(str || "")
+function escapeHtml(str: unknown): string {
+  return String(str ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -17,21 +36,21 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
-function formatDate(d) {
+function formatDate(d: unknown): string {
   if (!d) return "";
-  const dt = new Date(d);
+  const dt = new Date(String(d));
   if (Number.isNaN(dt.getTime())) return "";
   return dt.toLocaleDateString("ro-RO", { day: "2-digit", month: "short" });
 }
 
-function statusLabel(s) {
+function statusLabel(s: unknown): { text: string; cls: string } {
   if (s === "new") return { text: "Nou", cls: "new" };
   if (s === "talking") return { text: "În discuții", cls: "" };
   if (s === "booked") return { text: "Rezervat", cls: "ok" };
   return { text: "", cls: "" };
 }
 
-function defaultRequests() {
+function defaultRequests(): RequestItem[] {
   return [
     {
       id: uid(),
@@ -43,7 +62,8 @@ function defaultRequests() {
       people: 6,
       budget: "max 500 lei/noapte",
       fac: ["ciubăr", "liniște"],
-      details: "Weekend, 6 persoane. Vrem liniște, fără vecini, ideal aproape de trasee.",
+      details:
+        "Weekend, 6 persoane. Vrem liniște, fără vecini, ideal aproape de trasee.",
       status: "new",
       createdAt: Date.now() - 1000 * 60 * 80,
     },
@@ -79,22 +99,21 @@ function defaultRequests() {
 }
 
 export default function Home() {
-  const [requests, setRequests] = useState([]);
-  const [q, setQ] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-
-  const [open, setOpen] = useState(false);
+  const [requests, setRequests] = useState<RequestItem[]>([]);
+  const [q, setQ] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<"all" | StatusKey>("all");
+  const [open, setOpen] = useState<boolean>(false);
 
   // Form state
-  const [loc, setLoc] = useState("");
-  const [type, setType] = useState("Pensiune");
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
-  const [people, setPeople] = useState(2);
-  const [budget, setBudget] = useState("");
-  const [details, setDetails] = useState("");
-  const [st, setSt] = useState("new");
-  const [fac, setFac] = useState({
+  const [loc, setLoc] = useState<string>("");
+  const [type, setType] = useState<string>("Pensiune");
+  const [start, setStart] = useState<string>("");
+  const [end, setEnd] = useState<string>("");
+  const [people, setPeople] = useState<number>(2);
+  const [budget, setBudget] = useState<string>("");
+  const [details, setDetails] = useState<string>("");
+  const [st, setSt] = useState<StatusKey>("new");
+  const [fac, setFac] = useState<FacState>({
     "liniște": false,
     "ciubăr": false,
     "aproape de pârtie": false,
@@ -113,14 +132,14 @@ export default function Home() {
         setRequests(seeded);
         return;
       }
-      const parsed = JSON.parse(raw);
+      const parsed: unknown = JSON.parse(raw);
       if (!Array.isArray(parsed) || parsed.length === 0) {
         const seeded = defaultRequests();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
         setRequests(seeded);
         return;
       }
-      setRequests(parsed);
+      setRequests(parsed as RequestItem[]);
     } catch {
       const seeded = defaultRequests();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
@@ -128,7 +147,7 @@ export default function Home() {
     }
   }, []);
 
-  function persist(next) {
+  function persist(next: RequestItem[]) {
     setRequests(next);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   }
@@ -150,7 +169,9 @@ export default function Home() {
           .toLowerCase();
         return hay.includes(query);
       })
-      .filter((r) => (statusFilter === "all" ? true : r.status === statusFilter));
+      .filter((r) =>
+        statusFilter === "all" ? true : r.status === statusFilter
+      );
   }, [requests, q, statusFilter]);
 
   function resetDemo() {
@@ -160,7 +181,7 @@ export default function Home() {
     setRequests(seeded);
   }
 
-  function deleteRequest(id) {
+  function deleteRequest(id: string) {
     if (!confirm("Ștergi cererea?")) return;
     const next = requests.filter((r) => r.id !== id);
     persist(next);
@@ -174,7 +195,9 @@ export default function Home() {
     setSt("new");
     setStart("");
     setEnd("");
-    setDetails("Căutăm liniște, ideal ciubăr și curte. Preferăm aproape de trasee, nu la drum principal.");
+    setDetails(
+      "Căutăm liniște, ideal ciubăr și curte. Preferăm aproape de trasee, nu la drum principal."
+    );
     setFac((prev) => ({
       ...Object.fromEntries(Object.keys(prev).map((k) => [k, false])),
       "liniște": true,
@@ -203,7 +226,7 @@ export default function Home() {
       chosenFac.length ? " — " + chosenFac.slice(0, 2).join(", ") : ""
     }`;
 
-    const item = {
+    const item: RequestItem = {
       id: uid(),
       title,
       location,
@@ -234,7 +257,7 @@ export default function Home() {
 
   // Close modal on ESC
   useEffect(() => {
-    function onKey(e) {
+    function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
     document.addEventListener("keydown", onKey);
@@ -510,7 +533,7 @@ export default function Home() {
                 </div>
                 <div className="field">
                   📌{" "}
-                  <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                  <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as "all" | StatusKey)}>
                     <option value="all">toate</option>
                     <option value="new">noi</option>
                     <option value="talking">în discuții</option>
@@ -575,7 +598,12 @@ export default function Home() {
                         <span className={`status ${s.cls}`}>
                           <span className="bubble" /> {s.text}
                         </span>
-                        <button className="btn" onClick={() => alert("În versiunea reală: recomandări + oferte pensiuni + chat.")}>
+                        <button
+                          className="btn"
+                          onClick={() =>
+                            alert("În versiunea reală: recomandări + oferte pensiuni + chat.")
+                          }
+                        >
                           💬 Vezi răspunsuri
                         </button>
                       </div>
@@ -596,7 +624,7 @@ export default function Home() {
           className={`overlay ${open ? "show" : ""}`}
           aria-hidden={!open}
           onClick={(e) => {
-            if (e.target.classList.contains("overlay")) setOpen(false);
+            if ((e.target as HTMLElement).classList.contains("overlay")) setOpen(false);
           }}
         >
           <div className="modal" role="dialog" aria-modal="true">
@@ -614,7 +642,11 @@ export default function Home() {
               <div className="form-grid">
                 <div className="control">
                   <label>📍 Locație / zonă</label>
-                  <input value={loc} onChange={(e) => setLoc(e.target.value)} placeholder="ex: Marginimea Sibiului, Brașov, Maramureș" />
+                  <input
+                    value={loc}
+                    onChange={(e) => setLoc(e.target.value)}
+                    placeholder="ex: Marginimea Sibiului, Brașov, Maramureș"
+                  />
                 </div>
 
                 <div className="control">
@@ -639,12 +671,21 @@ export default function Home() {
 
                 <div className="control">
                   <label>👥 Număr persoane</label>
-                  <input type="number" min="1" value={people} onChange={(e) => setPeople(e.target.value)} />
+                  <input
+                    type="number"
+                    min={1}
+                    value={people}
+                    onChange={(e) => setPeople(Number(e.target.value || 1))}
+                  />
                 </div>
 
                 <div className="control">
                   <label>💰 Buget/noapte (opțional)</label>
-                  <input value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="ex: 300–500 lei" />
+                  <input
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    placeholder="ex: 300–500 lei"
+                  />
                 </div>
 
                 <div className="checks">
@@ -652,7 +693,7 @@ export default function Home() {
                     <label className="check" key={k}>
                       <input
                         type="checkbox"
-                        checked={fac[k]}
+                        checked={!!fac[k]}
                         onChange={(e) => setFac((prev) => ({ ...prev, [k]: e.target.checked }))}
                       />
                       {k === "liniște" && "🤫 "}
@@ -668,12 +709,16 @@ export default function Home() {
 
                 <div className="control" style={{ gridColumn: "1 / -1" }}>
                   <label>📝 Detalii</label>
-                  <textarea value={details} onChange={(e) => setDetails(e.target.value)} placeholder="ex: Vrem liniște, fără vecini, ideal ciubăr, aproape de trasee." />
+                  <textarea
+                    value={details}
+                    onChange={(e) => setDetails(e.target.value)}
+                    placeholder="ex: Vrem liniște, fără vecini, ideal ciubăr, aproape de trasee."
+                  />
                 </div>
 
                 <div className="control" style={{ gridColumn: "1 / -1" }}>
                   <label>⚑ Status</label>
-                  <select value={st} onChange={(e) => setSt(e.target.value)}>
+                  <select value={st} onChange={(e) => setSt(e.target.value as StatusKey)}>
                     <option value="new">Nou</option>
                     <option value="talking">În discuții</option>
                     <option value="booked">Rezervat</option>
