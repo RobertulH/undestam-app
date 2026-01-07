@@ -28,7 +28,7 @@ function uid(): string {
 }
 
 function escapeHtml(str: unknown): string {
-  return String(str ?? "")
+  return String(str || "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
