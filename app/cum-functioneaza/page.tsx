@@ -5,23 +5,19 @@ export default function CumFunctioneaza() {
         <a href="/" style={{ color: "#a9b7d6", textDecoration: "none" }}>← Înapoi la homepage</a>
 
         <h1 style={{ marginTop: 10 }}>Cum funcționează UndeStăm</h1>
-        <p style={{ color: "#a9b7d6", lineHeight: 1.7 }}>
-          Ideea: în loc de grupuri de Facebook cu spam, ai cereri clare + recomandări reale + pensiuni verificate.
+        <p style={{ color: "#a9b7d6", lineHeight: 1.8 }}>
+          Ideea: în loc de grupuri Facebook (unde se pierde informația), centralizăm cereri + recomandări într-o platformă.
         </p>
 
-        <ol style={{ lineHeight: 1.8 }}>
-          <li><strong>Creezi o cerere</strong> (locație, perioadă, număr persoane, buget, facilități).</li>
-          <li><strong>Primești recomandări</strong> de la oameni (și ulterior de la pensiuni verificate).</li>
-          <li><strong>Alegi și rezervi</strong> — fără spam, fără copy-paste, fără haos.</li>
+        <ol style={{ lineHeight: 1.9 }}>
+          <li><strong>Clientul creează o cerere</strong> (zonă, perioadă, buget, facilități).</li>
+          <li><strong>Comunitatea recomandă</strong> (cu reputație / profil / istoricul recomandărilor).</li>
+          <li><strong>Pensiunile verificate răspund</strong> fără spam (limită răspunsuri, filtrare copy-paste în v2).</li>
         </ol>
 
-        <h2 style={{ marginTop: 20 }}>Ce urmează (v2)</h2>
-        <ul style={{ lineHeight: 1.8 }}>
-          <li>Conturi utilizatori + reputație recomandări</li>
-          <li>Profil pensiune + verificare + calendar</li>
-          <li>Chat / mesagerie + limită de răspunsuri anti-spam</li>
-          <li>Hărți + filtre avansate</li>
-        </ul>
+        <div style={{ marginTop: 16, padding: 14, borderRadius: 14, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.03)" }}>
+          <strong>Următorul pas tehnic:</strong> DB + conturi + profil pensiune + mesagerie (chat) + moderare.
+        </div>
       </div>
     </div>
   );

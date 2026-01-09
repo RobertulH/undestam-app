@@ -5,14 +5,15 @@ import { useEffect, useMemo, useState } from "react";
 const STORAGE_KEY = "undestam_requests_v01";
 
 type StatusKey = "new" | "talking" | "booked";
+type FilterKey = "all" | StatusKey;
 
 type RequestItem = {
   id: string;
   title: string;
   location: string;
   type: string;
-  start: string; // ISO date (yyyy-mm-dd) sau ""
-  end: string; // ISO date (yyyy-mm-dd) sau ""
+  start: string; // ISO date yyyy-mm-dd sau ""
+  end: string; // ISO date yyyy-mm-dd sau ""
   people: number;
   budget: string;
   fac: string[];
@@ -28,7 +29,7 @@ function uid(): string {
 }
 
 function escapeHtml(str: unknown): string {
-  return String(str || "")
+  return String(str ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -101,7 +102,7 @@ function defaultRequests(): RequestItem[] {
 export default function Home() {
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [q, setQ] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<"all" | StatusKey>("all");
+  const [statusFilter, setStatusFilter] = useState<FilterKey>("all");
   const [open, setOpen] = useState<boolean>(false);
 
   // Form state
@@ -169,9 +170,7 @@ export default function Home() {
           .toLowerCase();
         return hay.includes(query);
       })
-      .filter((r) =>
-        statusFilter === "all" ? true : r.status === statusFilter
-      );
+      .filter((r) => (statusFilter === "all" ? true : r.status === statusFilter));
   }, [requests, q, statusFilter]);
 
   function resetDemo() {
@@ -251,9 +250,7 @@ export default function Home() {
     setBudget("");
     setDetails("");
     setSt("new");
-    setFac((prev) =>
-      Object.fromEntries(Object.keys(prev).map((k) => [k, false]))
-    );
+    setFac((prev) => Object.fromEntries(Object.keys(prev).map((k) => [k, false])));
     setOpen(false);
   }
 
@@ -477,10 +474,11 @@ export default function Home() {
               </div>
 
               <div className="nav-actions">
-                <button className="btn primary" onClick={() => setOpen(true)}>➕ Creează cerere</button>
+                <button className="btn primary" onClick={() => setOpen(true)}>
+                  ➕ Creează cerere
+                </button>
                 <a className="btn" href="/inscrie-pensiune">🏠 Vreau profil de pensiune</a>
                 <a className="btn" href="/caut-cazare-sibiu">📍 Caut cazare în Sibiu</a>
-                <a className="btn" href="/cum-functioneaza">ℹ️ Cum funcționează</a>
               </div>
             </div>
 
@@ -511,14 +509,20 @@ export default function Home() {
                   <div className="mini">În MVP, datele stau în browser (localStorage). La versiunea reală: DB + conturi.</div>
                 </div>
                 <div className="stat">
-                  <div className="label">Cum funcționează</div>
-                  <div className="value">3 pași</div>
-                  <div className="mini">Spui ce cauți → primești recomandări → pensiunile verificate îți răspund.</div>
+                  <div className="label">Pagini SEO pe zone</div>
+                  <div className="value">+4</div>
+                  <div className="mini">
+                    Exemple:{" "}
+                    <a href="/caut-cazare-sibiu" style={{ textDecoration: "underline" }}>Sibiu</a>,{" "}
+                    <a href="/caut-cazare-brasov" style={{ textDecoration: "underline" }}>Brașov</a>,{" "}
+                    <a href="/caut-cazare-bucovina" style={{ textDecoration: "underline" }}>Bucovina</a>,{" "}
+                    <a href="/caut-cazare-maramures" style={{ textDecoration: "underline" }}>Maramureș</a>
+                  </div>
                 </div>
                 <div className="stat">
                   <div className="label">Anti-spam</div>
                   <div className="value">Verificare</div>
-                  <div className="mini">Limită de răspunsuri + penalizare copy-paste (în versiunea 2).</div>
+                  <div className="mini">Limită de răspunsuri + penalizare copy-paste (în v2).</div>
                 </div>
               </div>
             </div>
@@ -536,10 +540,7 @@ export default function Home() {
                 </div>
                 <div className="field">
                   📌{" "}
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value as "all" | StatusKey)}
-                  >
+                  <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as FilterKey)}>
                     <option value="all">toate</option>
                     <option value="new">noi</option>
                     <option value="talking">în discuții</option>
@@ -583,24 +584,13 @@ export default function Home() {
                     <article className="req" key={item.id}>
                       <div className="req-top">
                         <div>
-                          <h3
-                            className="title"
-                            dangerouslySetInnerHTML={{ __html: escapeHtml(item.title) }}
-                          />
+                          <h3 className="title" dangerouslySetInnerHTML={{ __html: escapeHtml(item.title) }} />
                           <div className="meta">
                             {tags.map((t, i) => (
-                              <span
-                                className="tag"
-                                key={"t-" + i}
-                                dangerouslySetInnerHTML={{ __html: escapeHtml(t) }}
-                              />
+                              <span className="tag" key={"t-" + i} dangerouslySetInnerHTML={{ __html: escapeHtml(t) }} />
                             ))}
                             {facTags.map((t, i) => (
-                              <span
-                                className="tag"
-                                key={"f-" + i}
-                                dangerouslySetInnerHTML={{ __html: escapeHtml(t) }}
-                              />
+                              <span className="tag" key={"f-" + i} dangerouslySetInnerHTML={{ __html: escapeHtml(t) }} />
                             ))}
                           </div>
                         </div>
@@ -617,7 +607,9 @@ export default function Home() {
                         </span>
                         <button
                           className="btn"
-                          onClick={() => alert("În versiunea reală: recomandări + oferte pensiuni + chat.")}
+                          onClick={() =>
+                            alert("În versiunea reală: recomandări + oferte pensiuni + chat.")
+                          }
                         >
                           💬 Vezi răspunsuri
                         </button>

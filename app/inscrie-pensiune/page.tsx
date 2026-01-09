@@ -10,14 +10,11 @@ export default function InscriePensiune() {
 
   function submit() {
     if (!name.trim() || !loc.trim()) {
-      alert("Completează minim: Nume pensiune + Locație.");
+      alert("Completează numele și locația.");
       return;
     }
-    alert("MVP: formular demo. În versiunea live: se salvează în baza de date + verificare.");
-    setName("");
-    setLoc("");
-    setPhone("");
-    setLink("");
+    alert("MVP: formular demo. În versiunea reală: salvare în DB + verificare + profil public.");
+    setName(""); setLoc(""); setPhone(""); setLink("");
   }
 
   return (
@@ -26,41 +23,18 @@ export default function InscriePensiune() {
         <a href="/" style={{ color: "#a9b7d6", textDecoration: "none" }}>← Înapoi la homepage</a>
 
         <h1 style={{ marginTop: 10 }}>Înscrie pensiunea ta</h1>
-        <p style={{ color: "#a9b7d6", lineHeight: 1.7 }}>
-          În MVP, formularul este demonstrativ. În versiunea live: profil public + verificare + posibilitate de a răspunde la cereri.
+        <p style={{ color: "#a9b7d6", lineHeight: 1.8 }}>
+          Creează un profil verificat ca să poți răspunde la cereri fără spam.
         </p>
 
-        <div style={{ marginTop: 12, display: "grid", gap: 10 }}>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nume pensiune"
-            style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", color: "#e8eefc" }}
-          />
-          <input
-            value={loc}
-            onChange={(e) => setLoc(e.target.value)}
-            placeholder="Localitate / Județ"
-            style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", color: "#e8eefc" }}
-          />
-          <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Telefon (opțional)"
-            style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", color: "#e8eefc" }}
-          />
-          <input
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-            placeholder="Link site / Facebook / Booking (opțional)"
-            style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", color: "#e8eefc" }}
-          />
+        <div style={{ marginTop: 14, display: "grid", gap: 10 }}>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nume pensiune" style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", color: "#e8eefc" }} />
+          <input value={loc} onChange={(e) => setLoc(e.target.value)} placeholder="Zonă / localitate" style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", color: "#e8eefc" }} />
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Telefon (opțional)" style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", color: "#e8eefc" }} />
+          <input value={link} onChange={(e) => setLink(e.target.value)} placeholder="Link booking/facebook/site (opțional)" style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", color: "#e8eefc" }} />
 
-          <button
-            onClick={submit}
-            style={{ padding: 12, borderRadius: 12, border: "1px solid rgba(61,220,151,.35)", background: "rgba(61,220,151,.12)", color: "#e8eefc", fontWeight: 900, cursor: "pointer" }}
-          >
-            ✅ Trimite
+          <button onClick={submit} style={{ borderRadius: 12, padding: 12, border: "1px solid rgba(61,220,151,.35)", background: "rgba(61,220,151,.12)", color: "#e8eefc", fontWeight: 900, cursor: "pointer" }}>
+            ✅ Trimite (demo)
           </button>
         </div>
       </div>
