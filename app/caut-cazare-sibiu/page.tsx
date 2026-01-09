@@ -40,7 +40,7 @@ function isSibiuLike(text: string) {
   );
 }
 
-export default function ZonaSibiu() {
+export default function CautCazareSibiu() {
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [q, setQ] = useState<string>("");
   const [sf, setSf] = useState<FilterKey>("all");
@@ -139,7 +139,7 @@ export default function ZonaSibiu() {
         </div>
 
         <div style={{ marginTop: 12, color: "#a9b7d6", fontSize: 12.5, lineHeight: 1.6 }}>
-          <strong>Notă:</strong> în MVP datele sunt în browser. În versiunea live: DB + conturi.
+          <strong>Notă:</strong> în MVP datele sunt în browser (localStorage). În versiunea live: DB + conturi.
         </div>
       </div>
     </div>
